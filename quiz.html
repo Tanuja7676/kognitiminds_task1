@@ -1,0 +1,146 @@
+<!-- templates/quiz.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ topic.replace('_', ' ').title() }} - Quiz</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 30px; }
+        .quiz-container { max-width: 700px; margin: auto; }
+
+        .question { 
+            margin-bottom: 30px; 
+            padding: 15px; 
+            border: 1px solid #aaa; 
+            border-radius: 10px; 
+            background-color: #f9f9f9; 
+        }
+
+        .option-label {
+            display: block;
+            background-color: #fff;
+            border: 2px solid #2196F3;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .option-label:hover {
+            background-color: #e0f0ff;
+        }
+
+        input[type="radio"] {
+            display: none;
+        }
+
+        input[type="radio"]:checked + .option-label {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        .submit-btn {
+            margin-top: 20px; 
+            padding: 12px 25px; 
+            background-color: #4CAF50; 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 16px;
+        }
+
+        /* Timer Styles */
+        .progress-container {
+            width: 100%;
+            background-color: #ddd;
+            height: 20px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            height: 20px;
+            width: 100%;
+            background-color: green;
+            border-radius: 10px;
+            transition: width 1s linear;
+        }
+
+        #timer {
+            font-size: 18px;
+            font-weight: bold;
+            color: red;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h2>{{ topic.replace('_', ' ').title() }} Quiz</h2>
+
+        <!-- Timer and Progress Bar -->
+        <div id="timer">Time Left: <span id="time-left">30</span> sec</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+
+        <!-- Hidden Audio for Timer Sound -->
+        <audio id="timer-audio">
+            <source src="{{ url_for('static', filename='timer1 (2).mp3') }}" type="audio/mpeg">
+        </audio>
+        <audio id="warning-audio">
+            <source src="{{ url_for('static', filename='warning.mp3') }}" type="audio/mpeg">
+        </audio>
+
+        <form id="quiz-form" method="POST" action="{{ url_for('submit', topic=topic) }}">
+            {% for q_idx in range(questions|length) %}
+                {% set q = questions[q_idx] %}
+                <div class="question">
+                    <p><b>{{ q_idx + 1 }}. {{ q.question }}</b></p>
+                    {% for opt_idx in range(q.options|length) %}
+                        {% set option = q.options[opt_idx] %}
+                        {% set option_id = "q" ~ q_idx ~ "_" ~ opt_idx %}
+                        <input type="radio" name="q{{ q_idx }}" value="{{ option }}" required id="{{ option_id }}">
+                        <label for="{{ option_id }}" class="option-label">{{ option }}</label>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="submit-btn">Submit</button>
+        </form>
+    </div>
+
+    <script>
+        let timerDisplay = document.getElementById("time-left");
+        let progressBar = document.getElementById("progress-bar");
+        let timeLeft = 30; // 30 seconds timer
+        let timerAudio = document.getElementById("timer-audio");
+        let warningAudio = document.getElementById("warning-audio");
+
+        function updateTimer() {
+            if (timeLeft > 0) {
+                timeLeft--;
+                timerDisplay.innerText = timeLeft;
+                progressBar.style.width = (timeLeft / 30) * 100 + "%";
+
+                // Play sound only once at the start
+                if (timeLeft === 29) {
+                    timerAudio.play();
+                }
+
+                // Play warning sound at 5 seconds left
+                if (timeLeft === 5) {
+                    warningAudio.play();
+                }
+            } else {
+                document.getElementById("quiz-form").submit();  // Auto-submit when time runs out
+                clearInterval(timer); // Stop timer
+            }
+        }
+
+        let timer = setInterval(updateTimer, 1000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ name }} - Explanation</title>
+</head>
+<body>
+    <h1>{{ name }}</h1>
+    <p>{{ explanation }}</p>
+    <iframe width="560" height="315" src="{{ video_link }}" frameborder="0" allowfullscreen></iframe>
+    <br><br>
+    <a href="{{ url_for('quiz', name=name) }}">Start Quiz</a>
+    <br><br>
+    <a href="{{ url_for('index') }}">Back to Home</a>
+</body>+
+</html>

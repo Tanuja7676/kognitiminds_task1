@@ -1,0 +1,64 @@
+<!-- templates/result.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quiz Result</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background-color: #f4f4f4; }
+        .result-box { border: 2px solid #333; border-radius: 10px; padding: 30px; max-width: 500px; margin: auto; background-color: #fff; }
+        .btn { margin-top: 20px; padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; text-decoration: none; }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #ddd;
+            border-radius: 10px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        .progress {
+            height: 100%;
+            transition: width 0.3s;
+        }
+        .excellent { background-color: #28a745; }
+        .good { background-color: #ffc107; }
+        .poor { background-color: #dc3545; }
+    </style>
+</head>
+<body>
+    <div class="result-box">
+        <h2>Quiz Completed!</h2>
+        <p>Your Score: <b>{{ score }} / {{ total }}</b></p>
+
+        {% if topic == 'final_quiz' %}
+            <!-- Progress Feedback for Final Quiz -->
+            <div class="progress-bar">
+                <div class="progress 
+                    {% if score/total >= 0.8 %}excellent
+                    {% elif score/total >= 0.5 %}good
+                    {% else %}poor{% endif %}"
+                    style="width: {{ (score/total)*100 }}%">
+                </div>
+            </div>
+            <p>
+                {% if score/total >= 0.8 %}
+                    🌟 Excellent work! You’ve mastered the challenge.
+                {% elif score/total >= 0.5 %}
+                    👍 Good job! Keep it up.
+                {% else %}
+                    💡 Keep practicing to improve your score!
+                {% endif %}
+            </p>
+            <p>🚀 Stay tuned for more rounds and test your knowledge further!</p>
+        {% else %}
+            {% if score >= 3 %}
+                <p>🎉 Great job! You’ve unlocked the next topic.</p>
+            {% else %}
+                <p>❌ You need at least 3 correct answers to unlock the next topic. Try again!</p>
+            {% endif %}
+        {% endif %}
+
+        <a href="{{ url_for('topics') }}" class="btn">Back to Topics</a>
+    </div>
+</body>
+</html>

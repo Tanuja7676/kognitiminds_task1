@@ -1,0 +1,33 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Topics</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+        h1 { margin-bottom: 20px; }
+        .topic { margin: 15px auto; padding: 15px; width: 300px; border: 2px solid #333; border-radius: 10px; }
+        .locked { background-color: #f0f0f0; color: gray; cursor: not-allowed; }
+        .unlocked { background-color: #d0f0d0; cursor: pointer; }
+        a { text-decoration: none; color: black; display: block; }
+    </style>
+</head>
+<body>
+    <h1>Welcome, {{ username }}!</h1>
+    <h2>Select a Topic</h2>
+
+    {% for topic_key, quiz in quizzes.items() %}
+        {% if topic_key in unlocked %}
+            <div class="topic unlocked">
+                <a href="{{ url_for('intro', topic=topic_key) }}">
+                    {{ topic_key.replace('_', ' ').title() }}
+                </a>
+            </div>
+        {% else %}
+            <div class="topic locked">
+                🔒 {{ topic_key.replace('_', ' ').title() }}
+            </div>
+        {% endif %}
+    {% endfor %}
+</body>
+</html>
